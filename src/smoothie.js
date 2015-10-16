@@ -7,7 +7,8 @@ class Smoothie {
       updateFunction: undefined,   //A logic function that should be called every frame of the game loop
       propertiesToInterpolate: [], //An array of properties that should be interpolated: "position", "rotation", "scale", "size", "alpha"
       interpolate: true,           //A Boolean to turn interpolation on or off
-      fps: 60                      //The frame rate at which sprites should be rendered
+      fps: 60,                     //The frame rate at which the application's looping logic function should update
+      renderFps: undefined,        //The frame rate at which sprites should be rendered
     }
   ) {
     if (options.renderingEngine === undefined) throw new Error("Please assign a rendering engine as Smoothie's renderingEngine option"); 
@@ -52,14 +53,21 @@ class Smoothie {
       this.propertiesToInterpolate = new Set(options.propertiesToInterpolate);
     }
 
-    //The upper-limit frames per second that the game should run at.
+    //The upper-limit frames per second that the game' logic update
+    //function should run at.
     //Smoothie defaults to 60 fps.
     if (options.fps !== undefined) {
       this._fps = options.fps;
     } else {
-      this._fps = 60;
+      this._fps = undefined;
     }
 
+    //Optionally Clamp the upper-limit frame rate at which sprites should render
+    if (options.renderFps !== undefined) {
+      this._renderFps = options.renderFps;
+    } else {
+      this._renderFps = undefined;
+    }
     //Set sprite rendering position interpolation to
     //`true` by default
     if (options.interpolate === false) {
@@ -75,66 +83,122 @@ class Smoothie {
     this._startTime = Date.now();
     this._frameDuration = 1000 / this._fps;
     this._lag = 0;
+    this._lagOffset = 0;
+
+    this._renderStartTime = 0;
+    if (this._renderFps !== undefined) {
+      this._renderDuration = 1000 / this._renderFps;
+    }
   }
 
+  //Getters and setters
+
+  //Fps
   get fps() {return this._fps;}
   set fps(value) {
     this._fps = value;
     this._frameDuration = 1000 / this._fps;
   }
+ 
+  //renderFps
+  get renderFps() {return this._renderFps;}
+  set renderFps(value) {
+    this._renderFps = value;
+    this._renderDuration = 1000 / this._renderFps;
+  }
 
+  //`dt` (Delta time, the `this._lagOffset` value in Smoothie's code)
+  get dt() {return this._lagOffset;}
+
+  //Methods to pause and resume Smoothie
+  pause() {
+    this.paused = true;
+  }
+  resume() {
+    this.paused = false;
+  }
+
+  //The `start` method gets Smoothie's game loop running
   start() {
   
     //Start the game loop
     this.gameLoop();
   }
 
-  gameLoop() {
+  //The core game loop
+  gameLoop(timestamp) {
     requestAnimationFrame(this.gameLoop.bind(this));
 
-    if (this.fps === undefined) {
+    //Only run if Smoothie isn't paused
+    if (!this.paused) {
 
-      //Run the user-defined game logic function each frame of the
-      //game.
-      this.updateFunction();
-      this.render();
-    }
+      //The `interpolate` function updates the logic function at the
+      //same rate as the user-defined fps, renders the sprites, with
+      //interpolation, at the maximum frame rate the system is capbale
+      //of
 
-    //If `fps` has been set, clamp the frame rate to that upper limit.
-    else {
+      let interpolate = () => {
 
-      //Calculate the time that has elapsed since the last frame
-      let current = Date.now(),
-          elapsed = current - this._startTime;
+        //Calculate the time that has elapsed since the last frame
+        let current = Date.now(),
+            elapsed = current - this._startTime;
 
-      if (elapsed > 1000) elapsed = this._frameDuration;
+        //Catch any unexpectedly large frame rate spikes
+        if (elapsed > 1000) elapsed = this._frameDuration;
 
-      //For interpolation:
-      this._startTime = current;
+        //For interpolation:
+        this._startTime = current;
 
-      //Add the elapsed time to the lag counter
-      this._lag += elapsed;
+        //Add the elapsed time to the lag counter
+        this._lag += elapsed;
 
-      //Update the frame if the lag counter is greater than or
-      //equal to the frame duration
-      while (this._lag >= this._frameDuration){
+        //Update the frame if the lag counter is greater than or
+        //equal to the frame duration
+        while (this._lag >= this._frameDuration){
 
-        //Capture the sprites' previous positions for rendering
-        //interpolation
-        this.capturePreviousSpriteProperties();
+          //Capture the sprites' previous properties for rendering
+          //interpolation
+          this.capturePreviousSpriteProperties();
 
-        //Update the logic in the user-defined update function
+          //Update the logic in the user-defined update function
+          this.updateFunction();
+
+          //Reduce the lag counter by the frame duration
+          this._lag -= this._frameDuration;
+        }
+
+        //Calculate the lag offset and use it to render the sprites
+        this._lagOffset = this._lag / this._frameDuration;
+        this.render(this._lagOffset);
+      };
+
+      //If the `fps` hasn't been defined, call the user-defined update 
+      //function and render the sprites at the maximum rate the 
+      //system is capable of
+      if (this._fps === undefined) {
+
+        //Run the user-defined game logic function each frame of the
+        //game at the maxium frame rate your system is capable of
         this.updateFunction();
+        this.render();
+      } else {
+        if (this._renderFps === undefined){
+          interpolate();
+        } else {
 
-        //Reduce the lag counter by the frame duration
-        this._lag -= this._frameDuration;
+          //Implement optional frame rate rendering clamping
+          if(timestamp >= this._renderStartTime) {
+            
+            //Update the current logic frame and render with
+            //interpolation
+            interpolate();
+
+            //Reset the frame render start time
+            this._renderStartTime = timestamp + this._renderDuration;
+          }
+        }
       }
-
-      //Calculate the lag offset and use it to render the sprites
-      let lagOffset = this._lag / this._frameDuration;
-      this.render(lagOffset);
     }
-
   }
 
   //`capturePreviousSpritePositions`
@@ -194,7 +258,6 @@ class Smoothie {
       //A recursive function that does the work of figuring out the
       //interpolated positions
       let interpolateSprite = (sprite) => {
-
 
         //Position (`x` and `y` properties)
         if(this.propertiesToInterpolate.has("position")) {
