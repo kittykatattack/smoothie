@@ -56,7 +56,7 @@ will default to 60 fps. If you set it to `undefined` Smoothie will
 remove the fps ceiling completely and run everything at the maximum
 frame rate your system is capable of (usually 60, but some device
 screens
-refresh at 120.) You will loose the advantage of smooth sprite
+refresh at 120.) You will lose the advantage of smooth sprite
 animation with interpolation if you do this, but it's important to keep
 this feature in mind just in case you need it.
 
@@ -78,7 +78,7 @@ it running.
 ```js
 smoothie.start();
 ```
-Now you would see "It loops" displayed in the browser's console at 30
+Now you would see "It loops!" displayed in the browser's console at 30
 frames per second.
 
 This is the minimum setup that you need, but let's look at a more
@@ -178,9 +178,7 @@ Smoothie's constructor. Supply it with an array of strings that define
 the sprite properties you want to interpolate. Here's how to switch
 all of them on:
 ```js
-propertiesToInterpolate: [
-  "position", "rotation", "alpha", "scale", "size"
-]
+propertiesToInterpolate: ["position", "rotation", "alpha", "scale", "size"]
 ```
 Selectively add whichever properties you want. 
 
@@ -194,7 +192,8 @@ function logic at the same frame rate. That means jittery animation at
 low frame rates - if that's what you want, you've got it!
 
 Just for your reference, here's an example of how you might initialize
-Smoothie with all of its possible options.
+Smoothie with all of its possible options (only the first four are
+required).
 ```js
 var smoothie = new Smoothie({
   renderingEngine: PIXI, 
@@ -261,17 +260,18 @@ smoothie.dt
 ```
 ###Prevent texture bleed
 
-If you ever notice any texture bleed in your sprites, set the sprite's
+If you ever notice any (texture bleed)[http://www.realitymod.com/forum/f189-modding-tutorials/90244-pixel-bleeding.html] in your sprites, set the sprite's
 texture scale mode to `NEAREST`. Here's how:
 ```js
 anySprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 ```
 This forces Pixi to display sprite images using integer (whole number)
-pixel values, not floating point (decmial numbers) which is does by
+pixel values, not floating point (decmial numbers) which it does by
 default.
 However, it will also make slow animations appear jankier because
-sprite positions will appear change in minimum units of 1 pixel. A
-better solution is to use a tool like (Texture Packer)[https://www.codeandweb.com/texturepacker] that
+sprite positions will appear to change in minimum units of 1 pixel. A
+better solution is to use a tool like 
+(Texture Packer)[https://www.codeandweb.com/texturepacker] that
 packages sprites with 2 pixels of padding around them to prevent
 texture bleed.
 
