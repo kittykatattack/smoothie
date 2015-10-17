@@ -389,7 +389,7 @@ class Smoothie {
             //Find the sprite's child
             let child = sprite.children[i];
 
-            //display the child
+            //Restore the child sprite properties
             restoreSpriteProperties(child);
           }
         }

@@ -398,7 +398,7 @@ var Smoothie = (function () {
                 //Find the sprite's child
                 var child = sprite.children[i];
 
-                //display the child
+                //Restore the child sprite properties
                 restoreSpriteProperties(child);
               }
             }
