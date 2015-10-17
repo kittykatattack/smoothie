@@ -260,7 +260,7 @@ smoothie.dt
 ```
 ###Prevent texture bleed
 
-If you ever notice any (texture bleed)[http://www.realitymod.com/forum/f189-modding-tutorials/90244-pixel-bleeding.html] in your sprites, set the sprite's
+If you ever notice any [texture bleed](http://www.realitymod.com/forum/f189-modding-tutorials/90244-pixel-bleeding.html) in your sprites, set the sprite's
 texture scale mode to `NEAREST`. Here's how:
 ```js
 anySprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
@@ -271,7 +271,7 @@ default.
 However, it will also make slow animations appear jankier because
 sprite positions will appear to change in minimum units of 1 pixel. A
 better solution is to use a tool like 
-(Texture Packer)[https://www.codeandweb.com/texturepacker] that
+[Texture Packer](https://www.codeandweb.com/texturepacker) that
 packages sprites with 2 pixels of padding around them to prevent
 texture bleed.
 
