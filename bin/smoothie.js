@@ -7,24 +7,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Smoothie = (function () {
   function Smoothie() {
     var options = arguments[0] === undefined ? {
-      renderingEngine: PIXI, //The rendering engine (Pixi)
+      engine: PIXI, //The rendering engine (Pixi)
       renderer: undefined, //The Pixi renderer you created in your application
-      rootContainer: undefined, //The root Pixi display object (usually the `stage`)
-      updateFunction: undefined, //A logic function that should be called every frame of the game loop
-      propertiesToInterpolate: [], //An array of properties that should be interpolated: "position", "rotation", "scale", "size", "alpha"
+      root: undefined, //The root Pixi display object (usually the `stage`)
+      update: undefined, //A logic function that should be called every frame of the game loop
       interpolate: true, //A Boolean to turn interpolation on or off
       fps: 60, //The frame rate at which the application's looping logic function should update
-      renderFps: undefined } : arguments[0];
+      renderFps: undefined, //The frame rate at which sprites should be rendered
+      properties: { //Sprite roperties that should be interpolated
+        position: true,
+        rotation: true,
+        size: false,
+        scale: false,
+        alpha: false
+      }
+    } : arguments[0];
 
     _classCallCheck(this, Smoothie);
 
-    if (options.renderingEngine === undefined) throw new Error("Please assign a rendering engine as Smoothie's renderingEngine option");
+    if (options.engine === undefined) throw new Error("Please assign a rendering engine as Smoothie's engine option");
 
     //Find out which rendering engine is being used (the default is Pixi)
-    this.renderingEngine = "";
+    this.engine = "";
 
     //If the `renderingEngine` is Pixi, set up Pixi object aliases
-    if (options.renderingEngine.ParticleContainer && options.renderingEngine.Sprite) {
+    if (options.engine.ParticleContainer && options.engine.Sprite) {
       this.renderingEngine = "pixi";
     }
 
@@ -41,22 +48,23 @@ var Smoothie = (function () {
     //is the object is at the top of the display list heirarchy. If
     //you're using Pixi, it would be a `Container` object, often by
     //convention called the `stage`
-    if (options.rootContainer === undefined) {
-      throw new Error("Please assign a root container object (the stage) as Smoothie's rootContainer option");
+    if (options.root === undefined) {
+      throw new Error("Please assign a root container object (the stage) as Smoothie's rootr option");
     } else {
-      this.stage = options.rootContainer;
+      this.stage = options.root;
     }
 
-    if (options.updateFunction === undefined) {
-      throw new Error("Please assign a function that you want to update on each frame as Smoothie's updateFunction option");
+    if (options.update === undefined) {
+      throw new Error("Please assign a function that you want to update on each frame as Smoothie's update option");
     } else {
-      this.updateFunction = options.updateFunction;
+      this.update = options.update;
     }
 
-    if (options.propertiesToInterpolate === undefined) {
-      this.propertiesToInterpolate = new Set(["position", "rotation"]);
+    //Define the sprite properties that should be interpolated
+    if (options.properties === undefined) {
+      this.properties = { position: true, rotation: true };
     } else {
-      this.propertiesToInterpolate = new Set(options.propertiesToInterpolate);
+      this.properties = options.properties;
     }
 
     //The upper-limit frames per second that the game' logic update
@@ -159,7 +167,7 @@ var Smoothie = (function () {
             _this.capturePreviousSpriteProperties();
 
             //Update the logic in the user-defined update function
-            _this.updateFunction();
+            _this.update();
 
             //Reduce the lag counter by the frame duration
             _this._lag -= _this._frameDuration;
@@ -177,7 +185,7 @@ var Smoothie = (function () {
 
           //Run the user-defined game logic function each frame of the
           //game at the maxium frame rate your system is capable of
-          this.updateFunction();
+          this.update();
           this.render();
         } else {
           if (this._renderFps === undefined) {
@@ -211,22 +219,22 @@ var Smoothie = (function () {
 
       //A function that capture's the sprites properties
       var setProperties = function setProperties(sprite) {
-        if (_this2.propertiesToInterpolate.has("position")) {
+        if (_this2.properties.position) {
           sprite._previousX = sprite.x;
           sprite._previousY = sprite.y;
         }
-        if (_this2.propertiesToInterpolate.has("rotation")) {
+        if (_this2.properties.rotation) {
           sprite._previousRotation = sprite.rotation;
         }
-        if (_this2.propertiesToInterpolate.has("size")) {
+        if (_this2.properties.size) {
           sprite._previousWidth = sprite.width;
           sprite._previousHeight = sprite.height;
         }
-        if (_this2.propertiesToInterpolate.has("scale")) {
+        if (_this2.properties.scale) {
           sprite._previousScaleX = sprite.scale.x;
           sprite._previousScaleY = sprite.scale.y;
         }
-        if (_this2.propertiesToInterpolate.has("alpha")) {
+        if (_this2.properties.alpha) {
           sprite._previousAlpha = sprite.alpha;
         }
 
@@ -267,7 +275,7 @@ var Smoothie = (function () {
           var interpolateSprite = function interpolateSprite(sprite) {
 
             //Position (`x` and `y` properties)
-            if (_this3.propertiesToInterpolate.has("position")) {
+            if (_this3.properties.position) {
 
               //Capture the sprite's current x and y positions
               sprite._currentX = sprite.x;
@@ -283,7 +291,7 @@ var Smoothie = (function () {
             }
 
             //Rotation (`rotation` property)
-            if (_this3.propertiesToInterpolate.has("rotation")) {
+            if (_this3.properties.rotation) {
 
               //Capture the sprite's current rotation
               sprite._currentRotation = sprite.rotation;
@@ -295,7 +303,7 @@ var Smoothie = (function () {
             }
 
             //Size (`width` and `height` properties)
-            if (_this3.propertiesToInterpolate.has("size")) {
+            if (_this3.properties.size) {
 
               //Capture the sprite's current size
               sprite._currentWidth = sprite.width;
@@ -311,7 +319,7 @@ var Smoothie = (function () {
             }
 
             //Scale (`scale.x` and `scale.y` properties)
-            if (_this3.propertiesToInterpolate.has("scale")) {
+            if (_this3.properties.scale) {
 
               //Capture the sprite's current scale
               sprite._currentScaleX = sprite.scale.x;
@@ -327,7 +335,7 @@ var Smoothie = (function () {
             }
 
             //Alpha (`alpha` property)
-            if (_this3.propertiesToInterpolate.has("alpha")) {
+            if (_this3.properties.alpha) {
 
               //Capture the sprite's current alpha
               sprite._currentAlpha = sprite.alpha;
@@ -372,22 +380,22 @@ var Smoothie = (function () {
           //A recursive function that restores the sprite's original,
           //uninterpolated x and y positions
           var restoreSpriteProperties = function restoreSpriteProperties(sprite) {
-            if (_this3.propertiesToInterpolate.has("position")) {
+            if (_this3.properties.position) {
               sprite.x = sprite._currentX;
               sprite.y = sprite._currentY;
             }
-            if (_this3.propertiesToInterpolate.has("rotation")) {
+            if (_this3.properties.rotation) {
               sprite.rotation = sprite._currentRotation;
             }
-            if (_this3.propertiesToInterpolate.has("size")) {
+            if (_this3.properties.size) {
               sprite.width = sprite._currentWidth;
               sprite.height = sprite._currentHeight;
             }
-            if (_this3.propertiesToInterpolate.has("scale")) {
+            if (_this3.properties.scale) {
               sprite.scale.x = sprite._currentScaleX;
               sprite.scale.y = sprite._currentScaleY;
             }
-            if (_this3.propertiesToInterpolate.has("alpha")) {
+            if (_this3.properties.alpha) {
               sprite.alpha = sprite._currentAlpha;
             }
 
@@ -445,6 +453,4 @@ var Smoothie = (function () {
 
   return Smoothie;
 })();
-
-//The frame rate at which sprites should be rendered
 //# sourceMappingURL=smoothie.js.map

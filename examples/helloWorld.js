@@ -5,10 +5,10 @@ var stage = new PIXI.Container();
 
 //Next, create a new instance of Smoothie
 var smoothie = new Smoothie({
-  renderingEngine: PIXI, 
+  engine: PIXI, 
   renderer: renderer,
-  rootContainer: stage,
-  updateFunction: update.bind(this),
+  root: stage,
+  update: update.bind(this),
   fps: 30,
 });
 
@@ -16,15 +16,16 @@ var smoothie = new Smoothie({
 Here's what those options above mean:
 - `renderingEngine`: the PIXI global object.
 - `renderer`: The `renderer` object you created using Pixi's `autoDetectRenderer`
-- `rootContainer`: The `stage` Container object at the top of Pixi's display list heirarchy
+- `root`: The `stage` Container object at the top of Pixi's sprite display list heirarchy
 - `updateFunction`: A function, containing your game or application logic, that you want to run in a loop. 
 In this example it's the function caled `update` that you'll see ahead in this file. 
 Importantly, use `bind(this)` to bind the function to the current application scope.
 - `fps`: The frames-per-second that you want your animation to run at. The default is 60.
 
 There are other options you could supply:
-- `propertiesToInterpolate`: An array that defines the sprite properties for which you want smooth animation. The array
-can contain any of these 5 strings: "position", "rotation", "scale", "size", "alpha". If you leave this option out, 
+- `properties`: An object that defines 5 Boolean sprite properties for which you want 
+smooth animation: `position`, `rotation`, `scale`, `size`, `alpha`. 
+Set them to `true` to turn them on, and `false` to turn them off. If you leave the `properties` option out, 
 Smoothie will automatically give you smooth animation for position and rotation.
 - `interpolate`: A Boolean (true/false) value that determines whether animation smoothing (interpolation) should be on or off.
 */
