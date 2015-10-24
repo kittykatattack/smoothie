@@ -25,6 +25,10 @@ class Smoothie {
     //If the `renderingEngine` is Pixi, set up Pixi object aliases
     if (options.engine.ParticleContainer && options.engine.Sprite) {
       this.renderingEngine = "pixi";
+      this.Container = options.engine.Container;
+      this.Sprite = options.engine.Sprite;
+      this.MovieClip = options.engine.extras.MovieClip;
+      console.log(this.Sprite);
     }
 
     //Check to make sure the user had supplied a renderer. If you're
@@ -266,6 +270,7 @@ class Smoothie {
       //interpolated positions
       let interpolateSprite = (sprite) => {
 
+
         //Position (`x` and `y` properties)
         if(this.properties.position) {
 
@@ -296,17 +301,23 @@ class Smoothie {
 
         //Size (`width` and `height` properties)
         if(this.properties.size) {
+       
+          //Only allow this for Sprites or MovieClips. Because
+          //Containers vary in size when the sprites they contain
+          //move, the interpolation will cause them to scale erraticly
+          if (sprite instanceof this.Sprite || sprite instanceof this.MovieClip)  {
 
-          //Capture the sprite's current size
-          sprite._currentWidth = sprite.width;
-          sprite._currentHeight = sprite.height;
+            //Capture the sprite's current size
+            sprite._currentWidth = sprite.width;
+            sprite._currentHeight = sprite.height;
 
-          //Figure out the sprite's interpolated size
-          if (sprite._previousWidth !== undefined) {
-            sprite.width = (sprite.width - sprite._previousWidth) * lagOffset + sprite._previousWidth;
-          }
-          if (sprite._previousHeight !== undefined) {
-            sprite.height = (sprite.height - sprite._previousHeight) * lagOffset + sprite._previousHeight;
+            //Figure out the sprite's interpolated size
+            if (sprite._previousWidth !== undefined) {
+              sprite.width = (sprite.width - sprite._previousWidth) * lagOffset + sprite._previousWidth;
+            }
+            if (sprite._previousHeight !== undefined) {
+              sprite.height = (sprite.height - sprite._previousHeight) * lagOffset + sprite._previousHeight;
+            }
           }
         }
 
@@ -378,8 +389,13 @@ class Smoothie {
           sprite.rotation = sprite._currentRotation;
         }
         if(this.properties.size) {
-          sprite.width = sprite._currentWidth;
-          sprite.height = sprite._currentHeight;
+
+          //Only allow this for Sprites or Movie clips, to prevent
+          //Container scaling bug
+          if (sprite instanceof this.Sprite || sprite instanceof this.MovieClip)  {
+            sprite.width = sprite._currentWidth;
+            sprite.height = sprite._currentHeight;
+          }
         }
         if(this.properties.scale) {
           sprite.scale.x = sprite._currentScaleX;
