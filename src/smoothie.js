@@ -28,7 +28,6 @@ class Smoothie {
       this.Container = options.engine.Container;
       this.Sprite = options.engine.Sprite;
       this.MovieClip = options.engine.extras.MovieClip;
-      console.log(this.Sprite);
     }
 
     //Check to make sure the user had supplied a renderer. If you're
