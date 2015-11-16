@@ -13,7 +13,8 @@ class Smoothie {
         rotation: true,
         size: false,
         scale: false,
-        alpha: false
+        alpha: false,
+        tile: false                //Refers to `tileposition` and `tileScale` x and y properties
       }              
     }
   ) {
@@ -238,6 +239,16 @@ class Smoothie {
       if(this.properties.alpha) {
         sprite._previousAlpha = sprite.alpha;
       }
+      if(this.properties.tile) {
+        if (sprite.tilePosition !== undefined) {
+          sprite._previousTilePositionX = sprite.tilePosition.x;
+          sprite._previousTilePositionY = sprite.tilePosition.y;
+        }
+        if (sprite.tileScale !== undefined) {
+          sprite._previousTileScaleX = sprite.tileScale.x;
+          sprite._previousTileScaleY = sprite.tileScale.y;
+        } 
+      }
 
       if (sprite.children && sprite.children.length > 0) {
         for (let i = 0; i < sprite.children.length; i++) {
@@ -347,6 +358,43 @@ class Smoothie {
             sprite.alpha = (sprite.alpha - sprite._previousAlpha) * lagOffset + sprite._previousAlpha;
           }
         } 
+
+        //Tiling sprite properties (`tileposition` and `tileScale` x
+        //and y values)
+        if (this.properties.tile) {
+
+          //`tilePosition.x` and `tilePosition.y`
+          if (sprite.tilePosition !== undefined) {
+
+            //Capture the sprite's current tile x and y positions
+            sprite._currentTilePositionX = sprite.tilePosition.x;
+            sprite._currentTilePositionY = sprite.tilePosition.y;
+
+            //Figure out its interpolated positions
+            if (sprite._previousTilePositionX !== undefined) {
+              sprite.tilePosition.x = (sprite.tilePosition.x - sprite._previousTilePositionX) * lagOffset + sprite._previousTilePositionX;
+            }
+            if (sprite._previousTilePositionY !== undefined) {
+              sprite.tilePosition.y = (sprite.tilePosition.y - sprite._previousTilePositionY) * lagOffset + sprite._previousTilePositionY;
+            }
+          }
+
+          //`tileScale.x` and `tileScale.y`
+          if (sprite.tileScale !== undefined) {
+
+            //Capture the sprite's current tile scale
+            sprite._currentTileScaleX = sprite.tileScale.x;
+            sprite._currentTileScaleY = sprite.tileScale.y;
+
+            //Figure out the sprite's interpolated scale
+            if (sprite._previousTileScaleX !== undefined) {
+              sprite.tileScale.x = (sprite.tileScale.x - sprite._previousTileScaleX) * lagOffset + sprite._previousTileScaleX;
+            }
+            if (sprite._previousTileScaleY !== undefined) {
+              sprite.tileScale.y = (sprite.tileScale.y - sprite._previousTileScaleY) * lagOffset + sprite._previousTileScaleY;
+            }
+          } 
+        }
         
         //Interpolate the sprite's children, if it has any
         if (sprite.children.length !== 0) {
@@ -402,6 +450,16 @@ class Smoothie {
         }
         if(this.properties.alpha) {
           sprite.alpha = sprite._currentAlpha;
+        }
+        if(this.properties.tile) {
+          if (sprite.tilePosition !== undefined) {
+            sprite.tilePosition.x = sprite._currentTilePositionX;
+            sprite.tilePosition.y = sprite._currentTilePositionY;
+          }
+          if (sprite.tileScale !== undefined) {
+            sprite.tileScale.x = sprite._currentTileScaleX;
+            sprite.tileScale.y = sprite._currentTileScaleY;
+          }
         }
 
         //Restore the sprite's children, if it has any

@@ -5,8 +5,9 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Smoothie = (function () {
-  function Smoothie() {
-    var options = arguments[0] === undefined ? {
+  function Smoothie() //Refers to `tileposition` and `tileScale` x and y properties
+  {
+    var options = arguments.length <= 0 || arguments[0] === undefined ? {
       engine: PIXI, //The rendering engine (Pixi)
       renderer: undefined, //The Pixi renderer you created in your application
       root: undefined, //The root Pixi display object (usually the `stage`)
@@ -19,8 +20,8 @@ var Smoothie = (function () {
         rotation: true,
         size: false,
         scale: false,
-        alpha: false
-      }
+        alpha: false,
+        tile: false }
     } : arguments[0];
 
     _classCallCheck(this, Smoothie);
@@ -36,7 +37,6 @@ var Smoothie = (function () {
       this.Container = options.engine.Container;
       this.Sprite = options.engine.Sprite;
       this.MovieClip = options.engine.extras.MovieClip;
-      console.log(this.Sprite);
     }
 
     //Check to make sure the user had supplied a renderer. If you're
@@ -109,6 +109,10 @@ var Smoothie = (function () {
     }
   }
 
+  //Getters and setters
+
+  //Fps
+
   _createClass(Smoothie, [{
     key: "pause",
 
@@ -121,19 +125,21 @@ var Smoothie = (function () {
     value: function resume() {
       this.paused = false;
     }
-  }, {
-    key: "start",
 
     //The `start` method gets Smoothie's game loop running
+
+  }, {
+    key: "start",
     value: function start() {
 
       //Start the game loop
       this.gameLoop();
     }
-  }, {
-    key: "gameLoop",
 
     //The core game loop
+
+  }, {
+    key: "gameLoop",
     value: function gameLoop(timestamp) {
       var _this = this;
 
@@ -210,14 +216,15 @@ var Smoothie = (function () {
         }
       }
     }
-  }, {
-    key: "capturePreviousSpriteProperties",
 
     //`capturePreviousSpritePositions`
     //This function is run in the game loop just before the logic update
     //to store all the sprites' previous positions from the last frame.
     //It allows the render function to interpolate the sprite positions
     //for ultra-smooth sprite rendering at any frame rate
+
+  }, {
+    key: "capturePreviousSpriteProperties",
     value: function capturePreviousSpriteProperties() {
       var _this2 = this;
 
@@ -241,6 +248,16 @@ var Smoothie = (function () {
         if (_this2.properties.alpha) {
           sprite._previousAlpha = sprite.alpha;
         }
+        if (_this2.properties.tile) {
+          if (sprite.tilePosition !== undefined) {
+            sprite._previousTilePositionX = sprite.tilePosition.x;
+            sprite._previousTilePositionY = sprite.tilePosition.y;
+          }
+          if (sprite.tileScale !== undefined) {
+            sprite._previousTileScaleX = sprite.tileScale.x;
+            sprite._previousTileScaleY = sprite.tileScale.y;
+          }
+        }
 
         if (sprite.children && sprite.children.length > 0) {
           for (var i = 0; i < sprite.children.length; i++) {
@@ -256,17 +273,18 @@ var Smoothie = (function () {
         setProperties(sprite);
       }
     }
-  }, {
-    key: "render",
 
     //Smoothie's `render` method will interpolate the sprite positions and
     //rotation for
     //ultra-smooth animation, if Hexi's `interpolate` property is `true`
     //(it is by default)
+
+  }, {
+    key: "render",
     value: function render() {
       var _this3 = this;
 
-      var lagOffset = arguments[0] === undefined ? 1 : arguments[0];
+      var lagOffset = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
 
       //Calculate the sprites' interpolated render positions if
       //`this.interpolate` is `true` (It is true by default)
@@ -356,6 +374,43 @@ var Smoothie = (function () {
               }
             }
 
+            //Tiling sprite properties (`tileposition` and `tileScale` x
+            //and y values)
+            if (_this3.properties.tile) {
+
+              //`tilePosition.x` and `tilePosition.y`
+              if (sprite.tilePosition !== undefined) {
+
+                //Capture the sprite's current tile x and y positions
+                sprite._currentTilePositionX = sprite.tilePosition.x;
+                sprite._currentTilePositionY = sprite.tilePosition.y;
+
+                //Figure out its interpolated positions
+                if (sprite._previousTilePositionX !== undefined) {
+                  sprite.tilePosition.x = (sprite.tilePosition.x - sprite._previousTilePositionX) * lagOffset + sprite._previousTilePositionX;
+                }
+                if (sprite._previousTilePositionY !== undefined) {
+                  sprite.tilePosition.y = (sprite.tilePosition.y - sprite._previousTilePositionY) * lagOffset + sprite._previousTilePositionY;
+                }
+              }
+
+              //`tileScale.x` and `tileScale.y`
+              if (sprite.tileScale !== undefined) {
+
+                //Capture the sprite's current tile scale
+                sprite._currentTileScaleX = sprite.tileScale.x;
+                sprite._currentTileScaleY = sprite.tileScale.y;
+
+                //Figure out the sprite's interpolated scale
+                if (sprite._previousTileScaleX !== undefined) {
+                  sprite.tileScale.x = (sprite.tileScale.x - sprite._previousTileScaleX) * lagOffset + sprite._previousTileScaleX;
+                }
+                if (sprite._previousTileScaleY !== undefined) {
+                  sprite.tileScale.y = (sprite.tileScale.y - sprite._previousTileScaleY) * lagOffset + sprite._previousTileScaleY;
+                }
+              }
+            }
+
             //Interpolate the sprite's children, if it has any
             if (sprite.children.length !== 0) {
               for (var j = 0; j < sprite.children.length; j++) {
@@ -413,6 +468,16 @@ var Smoothie = (function () {
             if (_this3.properties.alpha) {
               sprite.alpha = sprite._currentAlpha;
             }
+            if (_this3.properties.tile) {
+              if (sprite.tilePosition !== undefined) {
+                sprite.tilePosition.x = sprite._currentTilePositionX;
+                sprite.tilePosition.y = sprite._currentTilePositionY;
+              }
+              if (sprite.tileScale !== undefined) {
+                sprite.tileScale.x = sprite._currentTileScaleX;
+                sprite.tileScale.y = sprite._currentTileScaleY;
+              }
+            }
 
             //Restore the sprite's children, if it has any
             if (sprite.children.length !== 0) {
@@ -435,33 +500,31 @@ var Smoothie = (function () {
     }
   }, {
     key: "fps",
-
-    //Getters and setters
-
-    //Fps
-    get: function () {
+    get: function get() {
       return this._fps;
     },
-    set: function (value) {
+    set: function set(value) {
       this._fps = value;
       this._frameDuration = 1000 / this._fps;
     }
-  }, {
-    key: "renderFps",
 
     //renderFps
-    get: function () {
+
+  }, {
+    key: "renderFps",
+    get: function get() {
       return this._renderFps;
     },
-    set: function (value) {
+    set: function set(value) {
       this._renderFps = value;
       this._renderDuration = 1000 / this._renderFps;
     }
-  }, {
-    key: "dt",
 
     //`dt` (Delta time, the `this._lagOffset` value in Smoothie's code)
-    get: function () {
+
+  }, {
+    key: "dt",
+    get: function get() {
       return this._lagOffset;
     }
   }]);

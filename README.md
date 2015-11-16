@@ -185,10 +185,14 @@ properties: {
   rotation: true, 
   alpha: true, 
   scale: true, 
-  size: true
+  size: true,
+  tile: true
 }
 ```
-Selectively add whichever properties you want. 
+Selectively add whichever properties you want. Setting the last
+property, `tile` to true switched on smooth interpolation for Pixi
+tiling sprite properties: `tilePosition.x`, `tilePosition.y`,
+`tileScale.x` and `tileScale.y`.
 
 You can also add a Boolean `interpolate` property that defines whether
 Smoothie should use interpolation (`true`) or not (`false`). 
@@ -215,7 +219,8 @@ var smoothie = new Smoothie({
     rotation: true, 
     alpha: true, 
     scale: true, 
-    size: true
+    size: true,
+    tile: true
   }
 });
 
