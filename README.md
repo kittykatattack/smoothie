@@ -1,4 +1,4 @@
-Smoothie
+Smoothie - A Game Loop for Pixi (v3.9)
 ========
 
 Smoothie is a super-fast and lightweight utility that gives you ultra-smooth
@@ -13,6 +13,8 @@ rate at which your system is capable of. That gives you a huge boost
 in processing overhead without sacrificing smooth animation. And, Smoothie will seamlessly
 smoothe out all the frames in-between by interpolating sprite
 positions.
+
+(Important! Dust targets Pixi v3.9, which is the most stable version of Pixi, and is the only version I can recommend using. This library will eventually be upgraded for Pixi v4 when the v4 branch matures.)
 
 Setting up
 ----------
