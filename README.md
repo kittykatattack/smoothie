@@ -14,8 +14,19 @@ in processing overhead without sacrificing smooth animation. And, Smoothie will 
 smoothe out all the frames in-between by interpolating sprite
 positions.
 
-(Important! Dust targets Pixi v3.9, which is the most stable version of Pixi, and is the only version I can recommend using. This library will eventually be upgraded for Pixi v4 when the v4 branch matures.)
+(Important! This library targets Pixi v3.9, which is the most stable version of Pixi, and is the only version I can recommend using. This library will eventually be upgraded for Pixi v4 when the v4 branch matures.)
 
+Table of contents
+-----------------
+
+[Setting up](#settingup) <br>
+[Animation](#animation) <br>
+[More about Smoothie's options](#options) <br>
+[Smoothie's properties](#properties) <br>
+[Advanced features](#advanced) <br>
+[License](#license) <br>
+
+<a id="settingup"></a>
 Setting up
 ----------
 
@@ -87,6 +98,7 @@ frames per second.
 This is the minimum setup that you need, but let's look at a more
 typical example that animates a sprite.
 
+<a id="animation"></a>
 Animation
 ---------
 
@@ -166,6 +178,7 @@ function, or use it as the basis for creating a game state manager,
 [as described here](https://github.com/kittykatattack/learningPixi#gamestates). Smoothie does all the hard work for you -
 you'll never have to worry about rendering again.
 
+<a id="options"></a>
 More about Smoothie's options
 -----------------------------
 
@@ -230,6 +243,7 @@ var smoothie = new Smoothie({
 And don't forget to call Smoothie's `start` method when you're ready
 to start animating!
 
+<a id="properties"></a>
 Smoothie's properties
 ----------------------
 
@@ -249,6 +263,7 @@ Smoothie has a few properties that you can change at run-time.
 
 And now you know how to use Smoothie!
 
+<a id="advanced"></a>
 Advanced features
 -----------------
 
@@ -311,11 +326,10 @@ better solution is to use a tool like
 packages sprites with 2 pixels of padding around them to prevent
 texture bleed.
 
+<a id="license"></a>
 License
 -------
-Smoothie is licenced under the Kittykatattack Universal License,
-which is the least restrictive software licence in existence. 
-(It's incalculably less restrictive that either MIT or CC.) So if you want to use
+Smoothie is licenced under the MIT license. So if you want to use
 Smoothie for anything, include to reverse engineer Smoothie so that
 Smoothie itself no longer exists, go for it!
 
