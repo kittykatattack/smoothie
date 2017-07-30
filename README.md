@@ -270,7 +270,7 @@ Advanced features
 Smoothie has a few extra features that you'll probably never need to
 use. But, just in case, here they are.
 
-###Set a rendering frame rate clamp
+### Set a rendering frame rate clamp
 
 To help you fine tune your render loop, Smoothie give you a
 `renderFps` property that lets you set the maximum frame
@@ -297,7 +297,7 @@ One other warning: if your game or application is running so badly that a
 far. Take a good a look at your application code and try and optimize
 it in other ways. 
 
-###Find the Delta Time
+### Find the Delta Time
 
 The amount of difference between the Smoothie's frame rate and the
 rate at which the browser is rendering sprites is accessible in a
@@ -309,7 +309,7 @@ smoothie.dt
 It's a *normalized value* (a decimal number between 0 and 1) which you might
 think of some use for.
 
-###Prevent texture bleed
+### Prevent texture bleed
 
 If you ever notice any [texture bleed](http://www.realitymod.com/forum/f189-modding-tutorials/90244-pixel-bleeding.html) in your sprites, set the sprite's
 texture scale mode to `NEAREST`. Here's how:
