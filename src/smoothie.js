@@ -28,7 +28,7 @@ class Smoothie {
       this.renderingEngine = "pixi";
       this.Container = options.engine.Container;
       this.Sprite = options.engine.Sprite;
-      this.MovieClip = options.engine.extras.MovieClip;
+      this.MovieClip = options.engine.extras.AnimatedSprite;
     }
 
     //Check to make sure the user had supplied a renderer. If you're
