@@ -1,11 +1,12 @@
+import {Smoothie} from "./../src/smoothie.js";
+
 //First, Create a Pixi renderer and stage
 var renderer = PIXI.autoDetectRenderer(512, 512);
 document.body.appendChild(renderer.view);
 var stage = new PIXI.Container();
 
 //Next, create a new instance of Smoothie
-var smoothie = new Smoothie({
-  engine: PIXI, 
+var smoothie = new Smoothie( PIXI, {
   renderer: renderer,
   root: stage,
   update: update.bind(this),
@@ -14,7 +15,6 @@ var smoothie = new Smoothie({
 
 /*
 Here's what those options above mean:
-- `renderingEngine`: the PIXI global object.
 - `renderer`: The `renderer` object you created using Pixi's `autoDetectRenderer`
 - `root`: The `stage` Container object at the top of Pixi's sprite display list heirarchy
 - `updateFunction`: A function, containing your game or application logic, that you want to run in a loop. 
@@ -32,7 +32,8 @@ Smoothie will automatically give you smooth animation for position and rotation.
 
 //Load any assets you might need and call the `setup` function when
 //they've finished loading
-PIXI.loader
+const loader = PIXI.Loader.shared;
+loader
   .add("images/cat.png")
   .load(setup);
 
@@ -43,7 +44,7 @@ var cat;
 function setup() {
 
   //Create the cat sprite and add it to the stage
-  cat = new PIXI.Sprite(PIXI.loader.resources["images/cat.png"].texture);
+  cat = new PIXI.Sprite(PIXI.Loader.shared.resources["images/cat.png"].texture);
   stage.addChild(cat);
 
   //After everything is set up, start Smoothie by calling its `start`

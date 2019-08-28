@@ -1,7 +1,7 @@
-class Smoothie {
+export class Smoothie {
   constructor(
+    PIXI,
     options = {
-      engine: PIXI,                //The rendering engine (Pixi)
       renderer: undefined,         //The Pixi renderer you created in your application
       root: undefined,             //The root Pixi display object (usually the `stage`)
       update: undefined,           //A logic function that should be called every frame of the game loop
@@ -18,18 +18,11 @@ class Smoothie {
       }              
     }
   ) {
-    if (options.engine === undefined) throw new Error("Please assign a rendering engine as Smoothie's engine option"); 
 
-    //Find out which rendering engine is being used (the default is Pixi)
-    this.engine = "";
-
-    //If the `renderingEngine` is Pixi, set up Pixi object aliases
-    if (options.engine.ParticleContainer && options.engine.Sprite) {
-      this.renderingEngine = "pixi";
-      this.Container = options.engine.Container;
-      this.Sprite = options.engine.Sprite;
-      this.MovieClip = options.engine.extras.MovieClip;
-    }
+    //Set up Pixi object aliases
+    this.Container = PIXI.Container;
+    this.Sprite = PIXI.Sprite;
+    this.MovieClip = PIXI.MovieClip;
 
     //Check to make sure the user had supplied a renderer. If you're
     //using Pixi, this should be the instantiated `renderer` object

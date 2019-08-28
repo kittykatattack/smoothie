@@ -14,7 +14,7 @@ in processing overhead without sacrificing smooth animation. And, Smoothie will 
 smoothe out all the frames in-between by interpolating sprite
 positions.
 
-(Important! This library targets Pixi v3.0.11, which is the most stable version of Pixi, and is the only version I can recommend using. This library will eventually be upgraded for Pixi v4 when the v4 branch matures.)
+This library targets Pixi v5.x
 
 Table of contents
 -----------------
@@ -35,6 +35,10 @@ tag.
 ```js
 <script src="smoothie.js"><script>
 ```
+Or, import it as a module:
+```
+import {Smoothie} from './smoothie';
+```
 But make sure you've also loaded Pixi. (If you don't know how to install
 and use Pixi [you can find out here](https://github.com/kittykatattack/learningPixi).
 
@@ -45,13 +49,16 @@ var renderer = PIXI.autoDetectRenderer(512, 512);
 document.body.appendChild(renderer.view);
 var stage = new PIXI.Container();
 ```
-Next, create a new instance of Smoothie. Initialize it with an
-`options` object, which supplies Smoothie with the basic information
-it needs to run. Here's how to initialize it with the minimum number
+Next, create a new instance of Smoothie. Initialize it with:
+
+1. A refernce to the PIXI global object.
+2. An `options` object, which supplies Smoothie with the basic information
+it needs to run. 
+
+Here's how to initialize it with the minimum number
 of options.
 ```js
-var smoothie = new Smoothie({
-  engine: PIXI, 
+var smoothie = new Smoothie(PIXI, {
   renderer: renderer,
   root: stage,
   fps: 30,
@@ -59,8 +66,8 @@ var smoothie = new Smoothie({
 });
 
 ```
-You can see that the first three options are the `PIXI` global object,
-and the `renderer` and `stage` that you created in the first steps.
+You can see that the first argument is the `PIXI` global object. The first
+two options are the `renderer` and `stage` that you created in the first steps.
 (`root` refers to the "root container" object in your display list
 sprite hierarchy.)
 
