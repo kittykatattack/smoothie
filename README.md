@@ -1,4 +1,4 @@
-Smoothie - A Game Loop for Pixi (v3.0.11)
+Smoothie - A Game Loop for Pixi
 ========
 
 Smoothie is a super-fast and lightweight utility that gives you ultra-smooth
