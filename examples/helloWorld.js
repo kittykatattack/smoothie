@@ -1,12 +1,12 @@
 import {Smoothie} from "./../src/smoothie.js";
 
 //First, Create a Pixi renderer and stage
-var renderer = PIXI.autoDetectRenderer(512, 512);
+let renderer = new PIXI.Renderer({ width: 512, height: 512, backgroundColor: 0x000000});
 document.body.appendChild(renderer.view);
-var stage = new PIXI.Container();
+let stage = new PIXI.Container();
 
 //Next, create a new instance of Smoothie
-var smoothie = new Smoothie( PIXI, {
+let smoothie = new Smoothie( PIXI, {
   renderer: renderer,
   root: stage,
   update: update.bind(this),

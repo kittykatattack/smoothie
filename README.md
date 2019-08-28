@@ -45,9 +45,9 @@ and use Pixi [you can find out here](https://github.com/kittykatattack/learningP
 In your JavaScript file, first create a Pixi `renderer` and `stage`, like
 this:
 ```js
-var renderer = PIXI.autoDetectRenderer(512, 512);
+let renderer = new PIXI.Renderer({ width: 512, height: 512, backgroundColor: 0x000000})
 document.body.appendChild(renderer.view);
-var stage = new PIXI.Container();
+let stage = new PIXI.Container();
 ```
 Next, create a new instance of Smoothie. Initialize it with:
 
@@ -120,12 +120,12 @@ The JavaScript file first creates the Pixi renderer and stage, and
 uses them to initialize Smoothie.
 ```js
 //First, Create a Pixi renderer and stage
-var renderer = PIXI.autoDetectRenderer(512, 512);
+let renderer = new PIXI.Renderer({ width: 512, height: 512, backgroundColor: 0x000000})
 document.body.appendChild(renderer.view);
-var stage = new PIXI.Container();
+let stage = new PIXI.Container();
 
 //Next, create a new instance of Smoothie
-var smoothie = new Smoothie({
+let smoothie = new Smoothie({
   engine: PIXI, 
   renderer: renderer,
   root: stage,
@@ -136,7 +136,7 @@ var smoothie = new Smoothie({
 Pixi's loader is then used to load an image of the cat from the
 `images` folder.
 ```js
-PIXI.loader
+PIXI.Loader.shared
   .add("images/cat.png")
   .load(setup);
 ```
@@ -144,12 +144,12 @@ As soon as the image is loaded, the loader calls the `setup` function.
 The `setup` function creates the `cat` sprite, and, very importantly,
 starts Smoothie.
 ```js
-var cat;
+let cat;
 
 //This code will run when the loader has finished loading the image
 function setup() {
 
-  cat = new PIXI.Sprite(PIXI.loader.resources["images/cat.png"].texture);
+  cat = new PIXI.Sprite(PIXI.Loader.shared.resources["images/cat.png"].texture);
   stage.addChild(cat);
 
   //After everything is set up, 
@@ -229,8 +229,7 @@ Just for your reference, here's an example of how you might initialize
 Smoothie with all of its possible options (only the first four are
 required).
 ```js
-var smoothie = new Smoothie({
-  engine: PIXI, 
+let smoothie = new Smoothie(PIXI, {
   renderer: renderer,
   root: stage,
   update: update.bind(this),
